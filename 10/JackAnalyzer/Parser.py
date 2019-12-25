@@ -382,10 +382,58 @@ class CompilationEngine:
 
         # LL(2)
         if self.jacktokenizer.tokenType() is IDENTIFIER:
-            self.writer.write("\t\t\t\t" + "<identifier>" +
-                              self.jacktokenizer.identifier() + "</identifier>" + "\n")
+            last_indentifier = self.jacktokenizer.identifier()
+            self.jacktokenizer.hasMoreTokens()
 
-        # '(' expression ')' not handle
+            if self.jacktokenizer.symbol() == "[":
+                self.writer.write("\t\t\t\t" + "<identifier>" +
+                                  last_indentifier + "</identifier>" + "\n")
+                self.writer.write("\t\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+                self.jacktokenizer.hasMoreTokens()
+                self.CompileExpression()
+                self.writer.write("\t\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+            elif self.jacktokenizer.symbol() == ".":
+                self.writer.write("\t\t\t\t" + "<identifier>" +
+                                  last_indentifier + "</identifier>" + "\n")
+                self.writer.write("\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+                self.jacktokenizer.hasMoreTokens()
+                self.writer.write("\t\t\t" + "<identifier>" +
+                                  self.jacktokenizer.identifier() + "</identifier>" + "\n")
+                self.jacktokenizer.hasMoreTokens()
+                self.writer.write("\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+                self.jacktokenizer.hasMoreTokens()
+                self.CompileExpressionList()
+                self.writer.write("\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+
+            elif self.jacktokenizer.symbol() == "(":
+                self.writer.write("\t\t\t\t" + "<identifier>" +
+                                  last_indentifier + "</identifier>" + "\n")
+                self.writer.write("\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+                self.jacktokenizer.hasMoreTokens()
+                self.CompileExpressionList()
+                self.writer.write("\t\t\t" + "<symbol>" +
+                                  self.jacktokenizer.symbol() + "</symbol>" + "\n")
+            else:
+                self.writer.write("\t\t\t\t" + "<identifier>" +
+                                  last_indentifier + "</identifier>" + "\n")
+
+                self.writer.write("\t\t\t"+"</term>\n")
+                return
+
+        # '(' expression ')'
+        if self.jacktokenizer.symbol() == "(":
+            self.writer.write("\t\t\t\t" + "<symbol>" +
+                              self.jacktokenizer.symbol() + "</symbol>" + "\n")
+            self.jacktokenizer.hasMoreTokens()
+            self.CompileExpression()
+            self.writer.write("\t\t\t\t" + "<symbol>" +
+                              self.jacktokenizer.symbol() + "</symbol>" + "\n")
 
         # integerConstant
         if self.jacktokenizer.tokenType() is INT_CONST:
@@ -394,8 +442,8 @@ class CompilationEngine:
 
         # stringConstant
         if self.jacktokenizer.tokenType() is STRING_CONST:
-            self.writer.write("\t\t\t\t" + "<StringConstant>" +
-                              self.jacktokenizer.stringVal() + "</StringConstant>"+"\n")
+            self.writer.write("\t\t\t\t" + "<stringConstant>" +
+                              self.jacktokenizer.stringVal() + "</stringConstant>"+"\n")
 
         # keywordConstant
         if self.jacktokenizer.keyWord() in ["true", "false", "null", "this"]:
@@ -403,11 +451,13 @@ class CompilationEngine:
                               self.jacktokenizer.keyWord() + "</keyword>"+"\n")
 
         # UnaryOp term
-        if self.jacktokenizer.symbol in ["-", "~"]:
+        if self.jacktokenizer.symbol() in ["-", "~"]:
             self.writer.write("\t\t\t\t" + "<symbol>" +
                               self.jacktokenizer.symbol() + "</symbol>"+"\n")
             self.jacktokenizer.hasMoreTokens()
             self.CompileTerm()
+            self.writer.write("\t\t\t"+"</term>\n")
+            return
 
         self.writer.write("\t\t\t"+"</term>\n")
 
