@@ -9,6 +9,7 @@
             M=M+1
 //pop pointer 0
 
+
             @0
             D=A
             @3
@@ -31,6 +32,7 @@
             @SP
             M=M+1
 //pop pointer 1
+
 
             @1
             D=A
@@ -55,6 +57,7 @@
             M=M+1
 //pop this 2
 
+
             @2
             D=A
             @THIS
@@ -67,7 +70,6 @@
             @i
             A=M
             M=D
-            
 //push constant 46
 
             @46
@@ -78,6 +80,7 @@
             @SP
             M=M+1
 //pop that 6
+
 
             @6
             D=A
@@ -91,7 +94,6 @@
             @i
             A=M
             M=D
-            
 //push pointer 0
 
             @0

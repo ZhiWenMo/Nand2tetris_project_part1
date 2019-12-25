@@ -27,6 +27,7 @@
             M=M+1
 //pop static 8
 
+
             @SP
             AM=M-1
             D=M
@@ -34,12 +35,14 @@
             M=D
 //pop static 3
 
+
             @SP
             AM=M-1
             D=M
             @StaticTest.vm.3
             M=D
 //pop static 1
+
 
             @SP
             AM=M-1
